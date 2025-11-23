@@ -1,5 +1,16 @@
 # Aura
 
+## Recent Updates (November 2025)
+
+**Project restructuring and multilingual support:**
+- ✨ Renamed main folder from `aura/` to `weather/` for better organization
+- 🌍 Added comprehensive multilingual support with dedicated translations system
+- 📁 Added VS Code workspace configuration for improved development experience
+- 🔧 Improved project structure with modular translation headers
+- 🎨 Enhanced UI with better language switching capabilities
+
+---
+
 Aura is a simple weather widget that runs on ESP32-2432S028R ILI9341 devices with a 2.8" screen. These devices are sometimes called a "CYD" or Cheap Yellow Display.
 
 This is just the source code for the project. This project includes a case design and assembly instructions. The complete instructions are available
