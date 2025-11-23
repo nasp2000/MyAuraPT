@@ -8,8 +8,15 @@
 - ✨ **Animated weather icons** - Smooth animated icons for all weather conditions (sunny, rainy, cloudy, storms, etc.)
 - 📁 Project restructured: renamed `aura/` to `weather/` for better organization
 - 🔧 Added VS Code workspace configuration for improved development workflow
+![alt text](IMG_20251123_192650.jpg)
+
 
 ---
+
+
+
+
+
 
 Aura is a simple weather widget that runs on ESP32-2432S028R ILI9341 devices with a 2.8" screen. These devices are sometimes called a "CYD" or Cheap Yellow Display.
 
