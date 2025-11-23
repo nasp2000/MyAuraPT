@@ -8,8 +8,11 @@
 - ✨ **Animated weather icons** - Smooth animated icons for all weather conditions (sunny, rainy, cloudy, storms, etc.)
 - 📁 Project restructured: renamed `aura/` to `weather/` for better organization
 - 🔧 Added VS Code workspace configuration for improved development workflow
-![alt text](IMG_20251123_192650.jpg)
 
+
+
+
+![alt text](IMG_20251123_192650-1.jpg)
 
 ---
 
