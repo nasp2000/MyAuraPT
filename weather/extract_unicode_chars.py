@@ -73,20 +73,24 @@ def print_character_analysis(non_ascii_chars, char_counter):
     spanish_chars = set("ñáéíóúüÑÁÉÍÓÚÜ¿¡")
     german_chars = set("äöüßÄÖÜ")
     french_chars = set("àâäçéèêëïîôùûüÿæœÀÂÄÇÉÈÊËÏÎÔÙÛÜŸÆŒ")
+    portuguese_chars = set("ãáâàçéêíóôõúÃÁÂÀÇÉÊÍÓÔÕÚ")
     
     spanish_found = non_ascii_chars & spanish_chars
     german_found = non_ascii_chars & german_chars
     french_found = non_ascii_chars & french_chars
-    other_found = non_ascii_chars - spanish_chars - german_chars - french_chars
+    portuguese_found = non_ascii_chars & portuguese_chars
+    other_found = non_ascii_chars - spanish_chars - german_chars - french_chars - portuguese_chars
     
     if spanish_found:
-        print(f"Spanish: {''.join(sorted(spanish_found))}")
+        print(f"Spanish:    {''.join(sorted(spanish_found))}")
     if german_found:
-        print(f"German:  {''.join(sorted(german_found))}")
+        print(f"German:     {''.join(sorted(german_found))}")
     if french_found:
-        print(f"French:  {''.join(sorted(french_found))}")
+        print(f"French:     {''.join(sorted(french_found))}")
+    if portuguese_found:
+        print(f"Portuguese: {''.join(sorted(portuguese_found))}")
     if other_found:
-        print(f"Other:   {''.join(sorted(other_found))}")
+        print(f"Other:      {''.join(sorted(other_found))}")
     
     print("\n4. LVGL FONT CONVERTER INPUT:")
     print("-" * 30)

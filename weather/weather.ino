@@ -20,9 +20,9 @@
 #define SCREEN_HEIGHT 320
 #define DRAW_BUF_SIZE (SCREEN_WIDTH * SCREEN_HEIGHT / 10 * (LV_COLOR_DEPTH / 8))
 
-#define LATITUDE_DEFAULT "51.5074"
-#define LONGITUDE_DEFAULT "-0.1278"
-#define LOCATION_DEFAULT "London"
+#define LATITUDE_DEFAULT "38.7229"
+#define LONGITUDE_DEFAULT "-7.9831"
+#define LOCATION_DEFAULT "Arraiolos"
 #define DEFAULT_CAPTIVE_SSID "Aura"
 #define UPDATE_INTERVAL 600000UL  // 10 minutes
 
@@ -36,7 +36,7 @@ LV_FONT_DECLARE(lv_font_montserrat_latin_16);
 LV_FONT_DECLARE(lv_font_montserrat_latin_20);
 LV_FONT_DECLARE(lv_font_montserrat_latin_42);
 
-static Language current_language = LANG_EN;
+static Language current_language = LANG_PT;
 
 // Font selection based on language
 const lv_font_t* get_font_12() {
@@ -67,8 +67,8 @@ int x, y, z;
 // Preferences
 static Preferences prefs;
 static bool use_fahrenheit = false;
-static bool use_24_hour = false; 
-static bool use_night_mode = false;
+static bool use_24_hour = true; 
+static bool use_night_mode = true;
 static char latitude[16] = LATITUDE_DEFAULT;
 static char longitude[16] = LONGITUDE_DEFAULT;
 static String location = String(LOCATION_DEFAULT);
@@ -80,12 +80,16 @@ static JsonArray geoResults;
 static bool night_mode_active = false;
 static bool temp_screen_wakeup_active = false;
 static lv_timer_t *temp_screen_wakeup_timer = nullptr;
+static lv_timer_t *forecast_toggle_timer = nullptr;
+static bool showing_daily_forecast = true;
 
 // UI components
 static lv_obj_t *lbl_today_temp;
 static lv_obj_t *lbl_today_feels_like;
 static lv_obj_t *img_today_icon;
+static lv_anim_t icon_anim;
 static lv_obj_t *lbl_forecast;
+static lv_obj_t *lbl_location_display;
 static lv_obj_t *box_daily;
 static lv_obj_t *box_hourly;
 static lv_obj_t *lbl_daily_day[7];
@@ -194,9 +198,9 @@ String hour_of_day(int hour) {
 
   if (use_24_hour) {
     if (hour < 10)
-      return String("0") + String(hour);
+      return String("0") + String(hour) + "H";
     else
-      return String(hour);
+      return String(hour) + "H";
   } else {
     if(hour == 0)   return String("12") + strings->am;
     if(hour == 12)  return String(strings->noon);
@@ -225,6 +229,11 @@ String urlencode(const String &str) {
     }
   }
   return encoded;
+}
+
+// Animation callback for icon pulsing effect
+static void icon_anim_cb(void * var, int32_t value) {
+  lv_obj_set_style_transform_zoom(img_today_icon, value, 0);
 }
 
 static void update_clock(lv_timer_t *timer) {
@@ -284,7 +293,7 @@ void touchscreen_read(lv_indev_t *indev, lv_indev_data_t *data) {
     // Handle touch during dimmed screen
     if (night_mode_active) {
       // Temporarily wake the screen for 15 seconds
-      analogWrite(LCD_BACKLIGHT_PIN, prefs.getUInt("brightness", 128));
+      analogWrite(LCD_BACKLIGHT_PIN, prefs.getUInt("brightness", 255));
     
       if (temp_screen_wakeup_timer) {
         lv_timer_del(temp_screen_wakeup_timer);
@@ -339,10 +348,10 @@ void setup() {
   lon.toCharArray(longitude, sizeof(longitude));
   use_fahrenheit = prefs.getBool("useFahrenheit", false);
   location = prefs.getString("location", LOCATION_DEFAULT);
-  use_night_mode = prefs.getBool("useNightMode", false);
+  use_night_mode = prefs.getBool("useNightMode", true);
   uint32_t brightness = prefs.getUInt("brightness", 255);
-  use_24_hour = prefs.getBool("use24Hour", false);
-  current_language = (Language)prefs.getUInt("language", LANG_EN);
+  use_24_hour = prefs.getBool("use24Hour", true);
+  current_language = (Language)prefs.getUInt("language", LANG_PT);
   analogWrite(LCD_BACKLIGHT_PIN, brightness);
 
   // Check for Wi-Fi config and request it if not available
@@ -351,6 +360,7 @@ void setup() {
   wm.autoConnect(DEFAULT_CAPTIVE_SSID);
 
   lv_timer_create(update_clock, 1000, NULL);
+  forecast_toggle_timer = lv_timer_create(forecast_toggle_timer_cb, 8000, NULL);
 
   lv_obj_clean(lv_scr_act());
   create_ui();
@@ -414,6 +424,16 @@ void create_ui() {
   lv_img_set_src(img_today_icon, &image_partly_cloudy);
   lv_obj_align(img_today_icon, LV_ALIGN_TOP_MID, -64, 4);
 
+  // Setup smooth pulsing animation for the weather icon
+  lv_anim_init(&icon_anim);
+  lv_anim_set_var(&icon_anim, img_today_icon);
+  lv_anim_set_exec_cb(&icon_anim, icon_anim_cb);
+  lv_anim_set_time(&icon_anim, 2000);  // 2 second cycle
+  lv_anim_set_values(&icon_anim, 256, 280);  // Zoom from 100% to 109%
+  lv_anim_set_repeat_count(&icon_anim, LV_ANIM_REPEAT_INFINITE);
+  lv_anim_set_playback_time(&icon_anim, 2000);  // Smooth back and forth
+  lv_anim_start(&icon_anim);
+
   static lv_style_t default_label_style;
   lv_style_init(&default_label_style);
   lv_style_set_text_color(&default_label_style, lv_color_hex(0xFFFFFF));
@@ -433,11 +453,17 @@ void create_ui() {
   lv_obj_set_style_text_color(lbl_today_feels_like, lv_color_hex(0xe4ffff), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_align(lbl_today_feels_like, LV_ALIGN_TOP_MID, 45, 75);
 
+  lbl_location_display = lv_label_create(scr);
+  lv_label_set_text(lbl_location_display, location.c_str());
+  lv_obj_set_style_text_font(lbl_location_display, get_font_14(), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_color(lbl_location_display, lv_color_hex(0xffd700), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_align(lbl_location_display, LV_ALIGN_TOP_LEFT, 20, 95);
+
   lbl_forecast = lv_label_create(scr);
   lv_label_set_text(lbl_forecast, strings->seven_day_forecast);
   lv_obj_set_style_text_font(lbl_forecast, get_font_12(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_color(lbl_forecast, lv_color_hex(0xe4ffff), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_align(lbl_forecast, LV_ALIGN_TOP_LEFT, 20, 110);
+  lv_obj_align(lbl_forecast, LV_ALIGN_TOP_LEFT, 20, 115);
 
   box_daily = lv_obj_create(scr);
   lv_obj_set_size(box_daily, 220, 180);
@@ -515,7 +541,7 @@ void create_ui() {
 
   // Create clock label in the top-right corner
   lbl_clock = lv_label_create(scr);
-  lv_obj_set_style_text_font(lbl_clock, get_font_14(), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_font(lbl_clock, get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_color(lbl_clock, lv_color_hex(0xb9ecff), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text(lbl_clock, "");
   lv_obj_align(lbl_clock, LV_ALIGN_TOP_RIGHT, -10, 2);
@@ -571,6 +597,7 @@ static void location_save_event_cb(lv_event_t *e) {
 
   // Re‐fetch weather immediately
   lv_label_set_text(lbl_loc, opts.c_str());
+  lv_label_set_text(lbl_location_display, location.c_str());
   fetch_and_update_weather();
 
   lv_obj_del(location_win);
@@ -586,11 +613,31 @@ void screen_event_cb(lv_event_t *e) {
   create_settings_window();
 }
 
+void toggle_forecast_view() {
+  const LocalizedStrings* strings = get_strings(current_language);
+  if (showing_daily_forecast) {
+    lv_obj_add_flag(box_daily, LV_OBJ_FLAG_HIDDEN);
+    lv_label_set_text(lbl_forecast, strings->hourly_forecast);
+    lv_obj_clear_flag(box_hourly, LV_OBJ_FLAG_HIDDEN);
+    showing_daily_forecast = false;
+  } else {
+    lv_obj_add_flag(box_hourly, LV_OBJ_FLAG_HIDDEN);
+    lv_label_set_text(lbl_forecast, strings->seven_day_forecast);
+    lv_obj_clear_flag(box_daily, LV_OBJ_FLAG_HIDDEN);
+    showing_daily_forecast = true;
+  }
+}
+
+void forecast_toggle_timer_cb(lv_timer_t *timer) {
+  toggle_forecast_view();
+}
+
 void daily_cb(lv_event_t *e) {
   const LocalizedStrings* strings = get_strings(current_language);
   lv_obj_add_flag(box_daily, LV_OBJ_FLAG_HIDDEN);
   lv_label_set_text(lbl_forecast, strings->hourly_forecast);
   lv_obj_clear_flag(box_hourly, LV_OBJ_FLAG_HIDDEN);
+  showing_daily_forecast = false;
 }
 
 void hourly_cb(lv_event_t *e) {
@@ -598,6 +645,7 @@ void hourly_cb(lv_event_t *e) {
   lv_obj_add_flag(box_hourly, LV_OBJ_FLAG_HIDDEN);
   lv_label_set_text(lbl_forecast, strings->seven_day_forecast);
   lv_obj_clear_flag(box_daily, LV_OBJ_FLAG_HIDDEN);
+  showing_daily_forecast = true;
 }
 
 
@@ -825,7 +873,7 @@ void create_settings_window() {
   lv_obj_align_to(lbl_lang, lbl_loc_l, LV_ALIGN_OUT_BOTTOM_LEFT, 0, vertical_element_spacing);
 
   language_dropdown = lv_dropdown_create(cont);
-  lv_dropdown_set_options(language_dropdown, "English\nEspañol\nDeutsch\nFrançais\nTürkçe\nSvenska\nItaliano");
+  lv_dropdown_set_options(language_dropdown, "English\nEspañol\nDeutsch\nFrançais\nTürkçe\nSvenska\nItaliano\nPortuguês");
   lv_dropdown_set_selected(language_dropdown, current_language);
   lv_obj_set_width(language_dropdown, 120);
   lv_obj_set_style_text_font(language_dropdown, get_font_12(), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -954,7 +1002,7 @@ void activate_night_mode() {
 }
 
 void deactivate_night_mode() {
-  analogWrite(LCD_BACKLIGHT_PIN, prefs.getUInt("brightness", 128));
+  analogWrite(LCD_BACKLIGHT_PIN, prefs.getUInt("brightness", 255));
   night_mode_active = false;
 }
 

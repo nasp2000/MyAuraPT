@@ -2,7 +2,7 @@
 #define TRANSLATIONS_H
 
 // Language support
-enum Language { LANG_EN = 0, LANG_ES = 1, LANG_DE = 2, LANG_FR = 3, LANG_TR = 4, LANG_SV = 5, LANG_IT = 6 };
+enum Language { LANG_EN = 0, LANG_ES = 1, LANG_DE = 2, LANG_FR = 3, LANG_TR = 4, LANG_SV = 5, LANG_IT = 6, LANG_PT = 7 };
 
 struct LocalizedStrings {
   const char* temp_placeholder;
@@ -258,6 +258,36 @@ static const LocalizedStrings strings_it = {
   "Schermo notte"
 };
 
+static const LocalizedStrings strings_pt = {
+  "--°C", "Sensacao", "PREVISAO 7 DIAS", "PREVISAO HORARIA",
+  "Hoje", "Agora", "am", "pm", "Meio-dia", "Hora inválida",
+  "Brilho:", "Localizacao:", "Usar °F:", "24h:",
+  "Guardar", "Cancelar", "Fechar", "Localizacao", "Redefinir Wi-Fi",
+  "Redefinir", "Mudar Localizacao", "Definicoes Aura",
+  "Cidade:", "Resultados da Pesquisa", "ex. Lisboa",
+  "Configuracao Wi-Fi:\n\n"
+  "Conecte o seu telefone\n"
+  "ou computador ao ponto\n"
+  "de acesso Wi-Fi temporário\n"
+  DEFAULT_CAPTIVE_SSID
+  "\n"
+  "para configurar.\n\n"
+  "Se nao vir um ecra de\n"
+  "configuracao após conectar,\n"
+  "visite http://192.168.4.1\n"
+  "no seu navegador.",
+  "Tem certeza que deseja\n"
+  "redefinir as credenciais\n"
+  "Wi-Fi?\n\n"
+  "Precisará reconectar ao SSID\n" DEFAULT_CAPTIVE_SSID
+  " com o seu telefone ou\n"
+  "navegador para reconfigurar\n"
+  "as credenciais Wi-Fi.",
+  "Idioma:",
+  {"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"},
+  "Modo noturno"
+};
+
 static const LocalizedStrings* get_strings(Language current_language) {
   switch (current_language) {
     case LANG_ES: return &strings_es;
@@ -266,6 +296,7 @@ static const LocalizedStrings* get_strings(Language current_language) {
     case LANG_TR: return &strings_tr;
     case LANG_SV: return &strings_sv;
     case LANG_IT: return &strings_it;
+    case LANG_PT: return &strings_pt;
     default: return &strings_en;
   }
 }
