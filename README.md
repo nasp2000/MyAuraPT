@@ -2,12 +2,13 @@
 
 ## Recent Updates (November 2025)
 
-**Project restructuring and multilingual support:**
-- ✨ Renamed main folder from `aura/` to `weather/` for better organization
-- 🌍 Added comprehensive multilingual support with dedicated translations system
-- 📁 Added VS Code workspace configuration for improved development experience
-- 🔧 Improved project structure with modular translation headers
-- 🎨 Enhanced UI with better language switching capabilities
+**New Features & Improvements:**
+- 🇵🇹 **Portuguese language support** - Added full Portuguese (PT) translation alongside English, Spanish, German, and French
+- 📍 **Location display on main screen** - Current location now prominently displayed on the main weather screen
+- ✨ **Animated weather icons** - Smooth animated icons for all weather conditions (sunny, rainy, cloudy, storms, etc.)
+- 🌍 Enhanced multilingual system with modular translations architecture
+- 📁 Project restructured: renamed `aura/` to `weather/` for better organization
+- 🔧 Added VS Code workspace configuration for improved development workflow
 
 ---
 
