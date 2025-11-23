@@ -3,7 +3,7 @@
 ## Recent Updates (November 2025)
 
 **New Features & Improvements:**
-- 🇵🇹 **Portuguese language support** - Added full Portuguese (PT) translation alongside with the originals
+- 🇵🇹 **Portuguese language support** - Added full Portuguese (PT) translation alongside with others in the original Aura
 - 📍 **Location display on main screen** - Current location now prominently displayed on the main weather screen
 - ✨ **Animated weather icons** - Smooth animated icons for all weather conditions (sunny, rainy, cloudy, storms, etc.)
 - 📁 Project restructured: renamed `aura/` to `weather/` for better organization for Arduino IDE
