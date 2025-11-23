@@ -1,4 +1,4 @@
-# MyAuraPT
+# MyAuraPT - with AI Coding
 
 ## Recent Updates (November 2025)
 
