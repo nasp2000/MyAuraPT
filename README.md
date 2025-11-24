@@ -12,7 +12,6 @@
 
 
 
-![alt text](Language-pt.jpg)
 
 ---
 
