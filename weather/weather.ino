@@ -26,9 +26,9 @@
 #define DEFAULT_CAPTIVE_SSID "Aura"
 #define UPDATE_INTERVAL 600000UL  // 10 minutes
 
-// Night mode starts at 10pm and ends at 6am
+// Night mode starts at 10pm and ends at 7am
 #define NIGHT_MODE_START_HOUR 22
-#define NIGHT_MODE_END_HOUR 6
+#define NIGHT_MODE_END_HOUR 7
 
 LV_FONT_DECLARE(lv_font_montserrat_latin_12);
 LV_FONT_DECLARE(lv_font_montserrat_latin_14);
@@ -360,7 +360,7 @@ void setup() {
   wm.autoConnect(DEFAULT_CAPTIVE_SSID);
 
   lv_timer_create(update_clock, 1000, NULL);
-  forecast_toggle_timer = lv_timer_create(forecast_toggle_timer_cb, 8000, NULL);
+  forecast_toggle_timer = lv_timer_create(forecast_toggle_timer_cb, 30000, NULL);
 
   lv_obj_clean(lv_scr_act());
   create_ui();
@@ -396,8 +396,8 @@ void loop() {
 void wifi_splash_screen() {
   lv_obj_t *scr = lv_scr_act();
   lv_obj_clean(scr);
-  lv_obj_set_style_bg_color(scr, lv_color_hex(0x4c8cb9), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0xa6cdec), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(scr, lv_color_hex(0x2a5a8f), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0x5a9cc8), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_grad_dir(scr, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -412,8 +412,8 @@ void wifi_splash_screen() {
 
 void create_ui() {
   lv_obj_t *scr = lv_scr_act();
-  lv_obj_set_style_bg_color(scr, lv_color_hex(0x4c8cb9), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0xa6cdec), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(scr, lv_color_hex(0x2a5a8f), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0x5a9cc8), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_grad_dir(scr, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -428,10 +428,10 @@ void create_ui() {
   lv_anim_init(&icon_anim);
   lv_anim_set_var(&icon_anim, img_today_icon);
   lv_anim_set_exec_cb(&icon_anim, icon_anim_cb);
-  lv_anim_set_time(&icon_anim, 2000);  // 2 second cycle
-  lv_anim_set_values(&icon_anim, 256, 280);  // Zoom from 100% to 109%
+  lv_anim_set_time(&icon_anim, 1200);  // 1.2 second cycle (faster)
+  lv_anim_set_values(&icon_anim, 256, 310);  // Zoom from 100% to 121% (more active)
   lv_anim_set_repeat_count(&icon_anim, LV_ANIM_REPEAT_INFINITE);
-  lv_anim_set_playback_time(&icon_anim, 2000);  // Smooth back and forth
+  lv_anim_set_playback_time(&icon_anim, 1200);  // Smooth back and forth
   lv_anim_start(&icon_anim);
 
   static lv_style_t default_label_style;
@@ -485,16 +485,16 @@ void create_ui() {
     img_daily[i] = lv_img_create(box_daily);
 
     lv_obj_add_style(lbl_daily_day[i], &default_label_style, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(lbl_daily_day[i], get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(lbl_daily_day[i], get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align(lbl_daily_day[i], LV_ALIGN_TOP_LEFT, 2, i * 24);
 
     lv_obj_add_style(lbl_daily_high[i], &default_label_style, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(lbl_daily_high[i], get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(lbl_daily_high[i], get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align(lbl_daily_high[i], LV_ALIGN_TOP_RIGHT, 0, i * 24);
 
     lv_label_set_text(lbl_daily_low[i], "");
     lv_obj_set_style_text_color(lbl_daily_low[i], lv_color_hex(0xb9ecff), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(lbl_daily_low[i], get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(lbl_daily_low[i], get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align(lbl_daily_low[i], LV_ALIGN_TOP_RIGHT, -50, i * 24);
 
     lv_img_set_src(img_daily[i], &icon_partly_cloudy);
@@ -521,16 +521,16 @@ void create_ui() {
     img_hourly[i] = lv_img_create(box_hourly);
 
     lv_obj_add_style(lbl_hourly[i], &default_label_style, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(lbl_hourly[i], get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(lbl_hourly[i], get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align(lbl_hourly[i], LV_ALIGN_TOP_LEFT, 2, i * 24);
 
     lv_obj_add_style(lbl_hourly_temp[i], &default_label_style, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(lbl_hourly_temp[i], get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(lbl_hourly_temp[i], get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align(lbl_hourly_temp[i], LV_ALIGN_TOP_RIGHT, 0, i * 24);
 
     lv_label_set_text(lbl_precipitation_probability[i], "");
     lv_obj_set_style_text_color(lbl_precipitation_probability[i], lv_color_hex(0xb9ecff), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(lbl_precipitation_probability[i], get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(lbl_precipitation_probability[i], get_font_20(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align(lbl_precipitation_probability[i], LV_ALIGN_TOP_RIGHT, -55, i * 24);
 
     lv_img_set_src(img_hourly[i], &icon_partly_cloudy);
