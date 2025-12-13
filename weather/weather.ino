@@ -449,19 +449,19 @@ void create_ui() {
 
   lbl_today_feels_like = lv_label_create(scr);
   lv_label_set_text(lbl_today_feels_like, strings->feels_like_temp);
-  lv_obj_set_style_text_font(lbl_today_feels_like, get_font_14(), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_font(lbl_today_feels_like, get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_color(lbl_today_feels_like, lv_color_hex(0xe4ffff), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_align(lbl_today_feels_like, LV_ALIGN_TOP_MID, 45, 75);
 
   lbl_location_display = lv_label_create(scr);
   lv_label_set_text(lbl_location_display, location.c_str());
-  lv_obj_set_style_text_font(lbl_location_display, get_font_14(), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_font(lbl_location_display, get_font_16(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_color(lbl_location_display, lv_color_hex(0xffd700), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_align(lbl_location_display, LV_ALIGN_TOP_LEFT, 20, 95);
 
   lbl_forecast = lv_label_create(scr);
   lv_label_set_text(lbl_forecast, strings->seven_day_forecast);
-  lv_obj_set_style_text_font(lbl_forecast, get_font_12(), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_font(lbl_forecast, get_font_14(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_color(lbl_forecast, lv_color_hex(0xe4ffff), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_align(lbl_forecast, LV_ALIGN_TOP_LEFT, 20, 115);
 
@@ -499,6 +499,17 @@ void create_ui() {
 
     lv_img_set_src(img_daily[i], &icon_partly_cloudy);
     lv_obj_align(img_daily[i], LV_ALIGN_TOP_LEFT, 72, i * 24);
+    // Scale up forecast icons and add animation
+    lv_obj_set_style_transform_zoom(img_daily[i], 307, 0);  // 120% size
+    lv_anim_t *daily_anim = lv_malloc(sizeof(lv_anim_t));
+    lv_anim_init(daily_anim);
+    lv_anim_set_var(daily_anim, img_daily[i]);
+    lv_anim_set_exec_cb(daily_anim, (lv_anim_exec_xcb_t)lv_obj_set_style_transform_zoom);
+    lv_anim_set_time(daily_anim, 1500);
+    lv_anim_set_values(daily_anim, 307, 330);
+    lv_anim_set_repeat_count(daily_anim, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_set_playback_time(daily_anim, 1500);
+    lv_anim_start(daily_anim);
   }
 
   box_hourly = lv_obj_create(scr);
@@ -535,6 +546,17 @@ void create_ui() {
 
     lv_img_set_src(img_hourly[i], &icon_partly_cloudy);
     lv_obj_align(img_hourly[i], LV_ALIGN_TOP_LEFT, 72, i * 24);
+    // Scale up forecast icons and add animation
+    lv_obj_set_style_transform_zoom(img_hourly[i], 307, 0);  // 120% size
+    lv_anim_t *hourly_anim = lv_malloc(sizeof(lv_anim_t));
+    lv_anim_init(hourly_anim);
+    lv_anim_set_var(hourly_anim, img_hourly[i]);
+    lv_anim_set_exec_cb(hourly_anim, (lv_anim_exec_xcb_t)lv_obj_set_style_transform_zoom);
+    lv_anim_set_time(hourly_anim, 1500);
+    lv_anim_set_values(hourly_anim, 307, 330);
+    lv_anim_set_repeat_count(hourly_anim, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_set_playback_time(hourly_anim, 1500);
+    lv_anim_start(hourly_anim);
   }
 
   lv_obj_add_flag(box_hourly, LV_OBJ_FLAG_HIDDEN);
