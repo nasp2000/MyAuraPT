@@ -501,7 +501,7 @@ void create_ui() {
     lv_obj_align(img_daily[i], LV_ALIGN_TOP_LEFT, 72, i * 24);
     // Scale up forecast icons and add animation
     lv_obj_set_style_transform_zoom(img_daily[i], 307, 0);  // 120% size
-    lv_anim_t *daily_anim = lv_malloc(sizeof(lv_anim_t));
+    lv_anim_t *daily_anim = (lv_anim_t *)lv_malloc(sizeof(lv_anim_t));
     lv_anim_init(daily_anim);
     lv_anim_set_var(daily_anim, img_daily[i]);
     lv_anim_set_exec_cb(daily_anim, (lv_anim_exec_xcb_t)lv_obj_set_style_transform_zoom);
@@ -548,7 +548,7 @@ void create_ui() {
     lv_obj_align(img_hourly[i], LV_ALIGN_TOP_LEFT, 72, i * 24);
     // Scale up forecast icons and add animation
     lv_obj_set_style_transform_zoom(img_hourly[i], 307, 0);  // 120% size
-    lv_anim_t *hourly_anim = lv_malloc(sizeof(lv_anim_t));
+    lv_anim_t *hourly_anim = (lv_anim_t *)lv_malloc(sizeof(lv_anim_t));
     lv_anim_init(hourly_anim);
     lv_anim_set_var(hourly_anim, img_hourly[i]);
     lv_anim_set_exec_cb(hourly_anim, (lv_anim_exec_xcb_t)lv_obj_set_style_transform_zoom);
