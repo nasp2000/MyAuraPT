@@ -396,8 +396,8 @@ void loop() {
 void wifi_splash_screen() {
   lv_obj_t *scr = lv_scr_act();
   lv_obj_clean(scr);
-  lv_obj_set_style_bg_color(scr, lv_color_hex(0x2a5a8f), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0x5a9cc8), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(scr, lv_color_hex(0x1a4a9f), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0x4a8cd8), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_grad_dir(scr, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -412,8 +412,8 @@ void wifi_splash_screen() {
 
 void create_ui() {
   lv_obj_t *scr = lv_scr_act();
-  lv_obj_set_style_bg_color(scr, lv_color_hex(0x2a5a8f), LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0x5a9cc8), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(scr, lv_color_hex(0x1a4a9f), LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_grad_color(scr, lv_color_hex(0x4a8cd8), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_grad_dir(scr, LV_GRAD_DIR_VER, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
 
